@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchInputs, handleInputChange } from './formSlice';
+import { fetchInputs, handleInputChange, handleCheckBoxInputChange } from './formSlice';
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -11,12 +11,13 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { Checkbox, FormGroup, Typography } from '@mui/material';
 
 function DynamicForm() {
 
     const form = useSelector(state => state.form)
     const inputs = form.inputs
+    const brands = form.formInputs.brands
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -118,7 +119,7 @@ function DynamicForm() {
                         case "input_dropdown":
                             return (
                                 <FormControl
-                                    sx={{ flexDirection: 'row', justifyContent: 'space-between' }}
+                                    sx={{ flexDirection: 'row', gap: '1rem' }}
                                     key={index}
                                 >
                                     <FormLabel
@@ -139,6 +140,41 @@ function DynamicForm() {
                                             </MenuItem>)
                                         })}
                                     </Select>
+                                </FormControl>)
+
+                        case "input_checkbox":
+                            return (
+                                <FormControl
+                                    sx={{ flexDirection: 'row', gap: '1rem' }}
+                                    key={index}>
+                                    <FormLabel
+                                        sx={{ alignSelf: 'center' }}
+                                        variant='h5'
+                                        id={value.id}
+                                    >{value.name}</FormLabel>
+                                    <FormGroup>
+                                        {value.data.map((opt, idx) => {
+                                            let checked = brands.includes(opt.id)
+                                            return (<FormControlLabel
+                                                key={idx}
+                                                value={opt.id}
+                                                label={opt.name}
+                                                control={<Checkbox checked={checked}
+                                                    value={opt.id}
+                                                    size="small"
+                                                    onChange={(events) =>
+                                                        dispatch(
+                                                            handleCheckBoxInputChange({
+                                                                key: value.id,
+                                                                val: events.target.value,
+                                                                checked: !checked
+                                                            })
+                                                        )
+                                                    }
+                                                />}
+                                            />)
+                                        })}
+                                    </FormGroup>
                                 </FormControl>)
                     }
                 })

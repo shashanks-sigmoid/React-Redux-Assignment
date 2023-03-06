@@ -6,7 +6,7 @@ const initialState = {
     inputs: [],
     error: '',
     formInputs: {},
-    disabled: false
+    disabled: false,
 }
 
 export const fetchInputs = createAsyncThunk('form/fetchInputs', (state) => {
@@ -29,6 +29,19 @@ const formSlice = createSlice({
             state.formInputs[key] = val;
             state.disabled = state.formInputs[key] ? false : true
         },
+        handleCheckBoxInputChange: (state, action) => {
+            const { key, val, checked } = action.payload
+            if (checked) {
+                (state.formInputs[key] ||= []).push(val)
+            }
+            else {
+                const index = (state.formInputs[key] ||= []).indexOf(val)
+                if (index > -1) {
+                    state.formInputs[key].splice(index, 1)
+                }
+            }
+            state.disabled = state.formInputs[key].length ? false : true
+        }
     },
     extraReducers: builder => {
         builder.addCase(fetchInputs.pending, state => {
@@ -50,5 +63,5 @@ const formSlice = createSlice({
     }
 })
 
-export const { handleInputChange } = formSlice.actions;
+export const { handleInputChange, handleCheckBoxInputChange } = formSlice.actions;
 export default formSlice.reducer
