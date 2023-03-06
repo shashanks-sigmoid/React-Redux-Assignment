@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchInputs } from './formSlice';
+import { fetchInputs, handleInputChange } from './formSlice';
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -33,9 +33,10 @@ function DynamicForm() {
                 mx: 'auto',
                 py: '3rem',
                 px: '5rem',
-                backgroundColor: 'beige',
-                boxShadow: '2px 2px 3px 3px gray'
-            }}>
+                boxShadow: '2px 2px 3px 3px gray',
+                bgcolor: '#f8f2f7'
+            }}
+        >
             <FormControl sx={{ gap: 3, width: 1 }}>
                 <Typography
                     variant="h3"
@@ -56,6 +57,14 @@ function DynamicForm() {
                                 defaultValue={value.defaultVal}
                                 variant="standard"
                                 type="text"
+                                onChange={(events) =>
+                                    dispatch(
+                                        handleInputChange({
+                                            key: value.id,
+                                            val: events.target.value,
+                                        })
+                                    )
+                                }
                             />)
 
                         case "input_number":
@@ -68,6 +77,14 @@ function DynamicForm() {
                                 InputProps={{ inputProps: { min: value.min, max: value.max } }}
                                 variant="standard"
                                 type="number"
+                                onChange={(events) =>
+                                    dispatch(
+                                        handleInputChange({
+                                            key: value.id,
+                                            val: events.target.value,
+                                        })
+                                    )
+                                }
                             />)
 
                         case "input_radio":
@@ -87,7 +104,7 @@ function DynamicForm() {
                                         sx={{ justifyContent: "center" }}
                                     >
                                         {value.data.map((opt, idx) => {
-                                            { console.log(opt.id) }
+                                            {/* { console.log(opt.id) } */ }
                                             return (<FormControlLabel
                                                 key={idx}
                                                 value={opt.id}
@@ -122,9 +139,10 @@ function DynamicForm() {
                 }
                 <Button
                     variant='contained'
-                    // onClick={handleSubmit}
+                    type="submit"
                     size='medium'
-                    className='submit-button'>
+                    disabled={form.disabled}
+                >
                     Submit
                 </Button>
             </FormControl>
