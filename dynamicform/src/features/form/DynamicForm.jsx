@@ -117,8 +117,14 @@ function DynamicForm() {
 
                         case "input_dropdown":
                             return (
-                                <FormControl key={index}>
-                                    <FormLabel variant='h5' id={value.id}>{value.name}</FormLabel>
+                                <FormControl
+                                    sx={{ flexDirection: 'row', justifyContent: 'space-between' }}
+                                    key={index}
+                                >
+                                    <FormLabel
+                                        sx={{ alignSelf: 'center' }}
+                                        variant='h5'
+                                        id={value.id}>{value.name}</FormLabel>
                                     <Select
                                         aria-labelledby={value.id}
                                         defaultValue={value.defaultVal}
