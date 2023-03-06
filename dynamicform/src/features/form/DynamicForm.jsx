@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchInputs } from './formSlice';
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -9,35 +11,16 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
-import axios from 'axios';
-import { margin } from '@mui/system';
 import { Typography } from '@mui/material';
 
 function DynamicForm() {
 
-    const [inputs, setInputs] = useState([])
-
-    const fetchApi = () => {
-
-        let url = 'https://run.mocky.io/v3/a55c4590-c635-49af-a01f-7ee2e6a85669'
-        url = 'https://run.mocky.io/v3/7ec8da10-b0ee-4016-86a0-100925968a0c'
-        axios.get(url, {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        })
-            .then((response) => {
-                console.log(response);
-                setInputs(response.data)
-            })
-            .catch((e) => {
-                console.log(e.message);
-            })
-
-    }
+    const form = useSelector(state => state.form)
+    const inputs = form.inputs
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        fetchApi();
+        dispatch(fetchInputs());
     }, [])
 
     return (
@@ -46,19 +29,21 @@ function DynamicForm() {
                 display: "flex",
                 justifyContent: "center",
                 my: '5rem',
-                mx: '25rem',
+                width: 500,
+                mx: 'auto',
                 py: '3rem',
                 px: '5rem',
                 backgroundColor: 'beige',
-                boxShadow: '1px 1px 1px gray'
+                boxShadow: '2px 2px 3px 3px gray'
             }}>
             <FormControl sx={{ gap: 3, width: 1 }}>
                 <Typography
-                    variant="h2"
-                    gutterBottom
+                    variant="h3"
                 >
                     Dynamic-Form
                 </Typography>
+                {form.loading && <div>Loading...</div>}
+                {!form.loading && form.error ? <div>Error: {form.error}</div> : null}
                 {inputs.map((value, index) => {
                     const inputType = value?.ui_element_type
                     switch (inputType) {
@@ -87,8 +72,13 @@ function DynamicForm() {
 
                         case "input_radio":
                             return (
-                                <FormControl key={index}>
-                                    <FormLabel id={value.id}>{value.name}</FormLabel>
+                                <FormControl
+                                    sx={{ flexDirection: 'row', gap: '1rem' }}
+                                    key={index}>
+                                    <FormLabel
+                                        sx={{ alignSelf: 'center' }}
+                                        variant='h5'
+                                        id={value.id}>{value.name}:</FormLabel>
                                     <RadioGroup
                                         row
                                         aria-labelledby={value.id}
@@ -111,7 +101,7 @@ function DynamicForm() {
                         case "input_dropdown":
                             return (
                                 <FormControl key={index}>
-                                    <FormLabel id={value.id}>{value.name}</FormLabel>
+                                    <FormLabel variant='h5' id={value.id}>{value.name}</FormLabel>
                                     <Select
                                         aria-labelledby={value.id}
                                         defaultValue={value.defaultVal}
