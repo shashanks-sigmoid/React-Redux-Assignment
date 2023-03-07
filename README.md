@@ -12,3 +12,5 @@ npm i && npm start
 ```
 
 Open http://localhost:3000 to view it in your browser.
+
+Netlify Link - https://shashank-react-redux-app.netlify.app/
